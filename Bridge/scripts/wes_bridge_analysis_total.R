@@ -216,7 +216,22 @@ cor.test(FUSCCTNBC_var_num$final_new,FUSCCTNBC_var_num$final_old)
 #######Or, written in notation form:
 #######J(A, B) = |A∩B| / |A∪B|
 
-c
+cal_jaccard <- function(data_new, data_old,name_col){
+  new_index <- as.matrix(unique(data_new[,1]))
+  result_ji <- matrix(NA,nrow(new_index),1)
+  rownames(result_ji) <- new_index
+  uni_new <- data_new[duplicated(data_new[,c(1,2)]), ]
+  uni_old <- data_old[duplicated(data_old[,c(1,2)]), ]
+  for( i in (1:nrow(new_index)))
+  {
+    result_ji[i,1] <- jaccard(as.matrix(data_new[data_new[,1] %in% c(new_index[i]),2]),
+                              as.matrix(data_old[data_old[,1] %in% c(new_index[i]),2]))
+  }
+  colnames(result_ji) <- name_col
+  result_ji <- as.data.frame(result_ji)
+  result_ji$sample_id <- rownames(result_ji)
+  return (result_ji)
+}
 
 JI_TNscope <- cal_jaccard(TNscope_new_A,TNscope_old_A,"TNscope")
 JI_TNseq <- cal_jaccard(TNseq_new_A,TNseq_old_A,"TNseq")
